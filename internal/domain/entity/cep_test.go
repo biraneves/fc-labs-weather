@@ -226,12 +226,12 @@ func TestCep_MarshalJSON(t *testing.T) {
 		{
 			name:  "valid zip code",
 			input: "12345678",
-			want:  []byte("12345678"),
+			want:  []byte(`"12345678"`),
 		},
 		{
 			name:  "invalid zip code",
 			input: "1234567",
-			want:  []byte(""),
+			want:  []byte(`null`),
 		},
 	}
 
@@ -260,12 +260,12 @@ func TestCep_UnmarshalJSON(t *testing.T) {
 	}{
 		{
 			name:  "valid zip code",
-			input: []byte("12345678"),
+			input: []byte(`"12345678"`),
 			want:  "12345678",
 		},
 		{
 			name:          "invalid zip code",
-			input:         []byte("1234567"),
+			input:         []byte(`"1234567"`),
 			want:          "",
 			expectedError: "zip code: invalid length",
 		},

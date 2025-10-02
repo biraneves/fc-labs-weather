@@ -1,6 +1,7 @@
 package entity
 
 import (
+	"encoding/json"
 	"errors"
 	"regexp"
 	"slices"
@@ -70,11 +71,25 @@ func (c Cep) Equal(o Cep) bool {
 }
 
 func (c Cep) MarshalJSON() ([]byte, error) {
-	return []byte(c.String()), nil
+	if c.IsZero() {
+		return []byte("null"), nil
+	}
+
+	return json.Marshal(c.String())
 }
 
 func (c *Cep) UnmarshalJSON(b []byte) error {
-	v, err := NewCep(string(b))
+	if string(b) == "null" {
+		*c = ""
+		return nil
+	}
+
+	var raw string
+	if err := json.Unmarshal(b, &raw); err != nil {
+		return err
+	}
+
+	v, err := NewCep(raw)
 	if err != nil {
 		return err
 	}
