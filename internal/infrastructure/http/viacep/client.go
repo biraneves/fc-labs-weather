@@ -3,7 +3,6 @@ package viacep
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -11,10 +10,6 @@ import (
 
 	"github.com/biraneves/fc-labs-weather/internal/application/dto"
 	"github.com/biraneves/fc-labs-weather/internal/application/ports/outbound"
-)
-
-var (
-	ErrZipcodeNotFound = errors.New("viacep: zipcode not found")
 )
 
 type HTTPClient struct {
@@ -61,7 +56,7 @@ func (h *HTTPClient) Find(ctx context.Context, request dto.ViaCEPRequestDto) (dt
 	defer resp.Body.Close()
 
 	if resp.StatusCode == http.StatusNotFound {
-		return dto.ViaCEPResponseDto{}, ErrZipcodeNotFound
+		return dto.ViaCEPResponseDto{}, outbound.ErrZipcodeNotFound
 	}
 	if resp.StatusCode != http.StatusOK {
 		return dto.ViaCEPResponseDto{}, fmt.Errorf("viacep: unexpected status: %d", resp.StatusCode)
@@ -77,7 +72,7 @@ func (h *HTTPClient) Find(ctx context.Context, request dto.ViaCEPRequestDto) (dt
 	}
 
 	if payload.Erro {
-		return dto.ViaCEPResponseDto{}, ErrZipcodeNotFound
+		return dto.ViaCEPResponseDto{}, outbound.ErrZipcodeNotFound
 	}
 
 	return payload.ViaCEPResponseDto, nil

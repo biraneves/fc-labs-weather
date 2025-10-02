@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/biraneves/fc-labs-weather/internal/application/dto"
+	"github.com/biraneves/fc-labs-weather/internal/application/ports/outbound"
 	"github.com/biraneves/fc-labs-weather/internal/infrastructure/http/viacep"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -64,8 +65,8 @@ func TestHTTPClient_Find(t *testing.T) {
 				status: http.StatusNotFound,
 				body:   `{}`,
 			},
-			wantError:     viacep.ErrZipcodeNotFound,
-			expectedError: viacep.ErrZipcodeNotFound.Error(),
+			wantError:     outbound.ErrZipcodeNotFound,
+			expectedError: outbound.ErrZipcodeNotFound.Error(),
 		},
 		{
 			name: "zipcode not found - field erro equals true",
@@ -73,8 +74,8 @@ func TestHTTPClient_Find(t *testing.T) {
 				status: http.StatusOK,
 				body:   `{"erro": true}`,
 			},
-			wantError:     viacep.ErrZipcodeNotFound,
-			expectedError: viacep.ErrZipcodeNotFound.Error(),
+			wantError:     outbound.ErrZipcodeNotFound,
+			expectedError: outbound.ErrZipcodeNotFound.Error(),
 		},
 		{
 			name: "unexpected error",

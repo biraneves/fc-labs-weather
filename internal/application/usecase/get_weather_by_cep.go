@@ -34,7 +34,7 @@ func (g GetWeatherByCEPUseCase) Execute(ctx context.Context, request dto.Request
 
 	viaResp, err := g.Zipcode.Find(ctx, dto.ViaCEPRequestDto{CEP: cep})
 	if err != nil {
-		if errors.Is(err, ErrZipcodeNotFound) {
+		if errors.Is(err, outbound.ErrZipcodeNotFound) {
 			return dto.RequestOutDto{}, ErrZipcodeNotFound
 		}
 		return dto.RequestOutDto{}, fmt.Errorf("zipcode lookup failed: %w", err)
