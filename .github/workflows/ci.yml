@@ -56,4 +56,4 @@ jobs:
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
                   build-args: |
-                      LDFLAGS=-ldflags "-s -w"
+                      LDFLAGS=-s -w
