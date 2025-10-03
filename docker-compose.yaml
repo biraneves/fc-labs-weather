@@ -4,7 +4,7 @@ services:
   weather-app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     ports:
       - "8085:8085"
     restart: unless-stopped
