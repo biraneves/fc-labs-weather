@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"fmt"
+	"log/slog"
 	"path/filepath"
 	"strings"
 	"time"
@@ -50,7 +51,9 @@ func Load(dir string) (AppConfig, error) {
 	v.SetDefault("WEATHER_TIMEOU", "5s")
 
 	if err := v.ReadInConfig(); err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			slog.Warn("config: .env file not found, relying on environment variables and defaults")
+		} else {
 			return AppConfig{}, fmt.Errorf("load config file: %w", err)
 		}
 	}
