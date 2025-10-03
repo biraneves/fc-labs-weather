@@ -1,11 +1,10 @@
-version: "3.8"
-
 services:
   weather-app:
+    image: biraneves/weather-app:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: Dockerfile.prod
     ports:
-      - "8085:8085"
+      - "8080:8080"
     restart: unless-stopped
     container_name: weather-app

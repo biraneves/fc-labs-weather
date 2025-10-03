@@ -3,6 +3,8 @@ APP_NAME := weather-app
 BINARY_NAME := svc
 DOCKER_COMPOSE := docker-compose
 
+export IMAGE_TAG := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "latest")
+
 # Help
 .DEFAULT_GOAL := help
 
@@ -10,6 +12,8 @@ DOCKER_COMPOSE := docker-compose
 
 help:
 	@echo "Usage: make <target>"
+	@echo ""
+	@echo "Current image tag: $(IMAGE_TAG)"
 	@echo ""
 	@echo "Targets:"
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-20s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
