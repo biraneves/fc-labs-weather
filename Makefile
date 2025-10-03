@@ -1,7 +1,7 @@
 # Variables
 APP_NAME := weather-app
 BINARY_NAME := svc
-DOCKER_COMPOSE := docker-compose
+DOCKER_COMPOSE := docker compose
 
 export IMAGE_TAG := $(shell git describe --tags --abbrev=0 2>/dev/null || echo "latest")
 
