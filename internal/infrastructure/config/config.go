@@ -49,7 +49,7 @@ func Load(dir string) (AppConfig, error) {
 	v.SetDefault("WEATHER_URL", "https://api.weatherapi.com/v1")
 	v.SetDefault("WEATHER_TIMEOU", "5s")
 
-	if err := v.ReadInConfig(); err != nil {
+	if err := v.ReadInConfig(); err != nil && !errors.As(err, &viper.ConfigFileNotFoundError{}) {
 		return AppConfig{}, fmt.Errorf("load config file: %w", err)
 	}
 
