@@ -19,7 +19,7 @@ import (
 const shutdownTimeout = 10 * time.Second
 
 func main() {
-	cfg, err := config.Load("internal/infrastructure/config")
+	cfg, err := config.Load(".")
 	if err != nil {
 		log.Fatalf("config: %v", err)
 	}
