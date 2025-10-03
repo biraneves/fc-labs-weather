@@ -21,7 +21,7 @@ const shutdownTimeout = 10 * time.Second
 func main() {
 	cfg, err := config.Load(".")
 	if err != nil {
-		log.Fatalf("config: %v", err)
+		slog.Warn("config:", slog.String("error", err.Error()))
 	}
 
 	httpClient := &http.Client{Timeout: cfg.HTTP.Timeout}
