@@ -2,6 +2,8 @@ package weatherapi_test
 
 import (
 	"context"
+	"io"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -13,8 +15,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+var noopLogger = slog.New(slog.NewJSONHandler(io.Discard, nil))
+
 func TestNewHTTPClient(t *testing.T) {
-	client := weatherapi.NewHTTPClient(nil, "", "token", 0)
+	client := weatherapi.NewHTTPClient(nil, "", "token", 0, noopLogger)
 	require.NotNil(t, client)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
@@ -111,7 +115,7 @@ func TestHTTPClient_FetchCurrent(t *testing.T) {
 			}))
 			defer server.Close()
 
-			client := weatherapi.NewHTTPClient(nil, server.URL, "token", 50*time.Millisecond)
+			client := weatherapi.NewHTTPClient(nil, server.URL, "token", 50*time.Millisecond, noopLogger)
 
 			ctx := context.Background()
 			if tt.fields.delay > 0 {
@@ -133,7 +137,7 @@ func TestHTTPClient_FetchCurrent(t *testing.T) {
 }
 
 func TestHTTPClient_FetchCurrent_MissingAPIKey(t *testing.T) {
-	client := weatherapi.NewHTTPClient(nil, "https://example.com", "", time.Second)
+	client := weatherapi.NewHTTPClient(nil, "https://example.com", "", time.Second, noopLogger)
 
 	_, err := client.FetchCurrent(context.Background(), dto.WeatherAPIRequestDto{Q: "São Paulo"})
 	require.Error(t, err)

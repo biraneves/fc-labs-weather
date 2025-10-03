@@ -3,6 +3,8 @@ package viacep_test
 import (
 	"context"
 	"errors"
+	"io"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -15,8 +17,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+var noopLogger = slog.New(slog.NewJSONHandler(io.Discard, nil))
+
 func TestNewHTTPClient(t *testing.T) {
-	client := viacep.NewHTTPClient(nil, "", 0)
+	client := viacep.NewHTTPClient(nil, "", 0, noopLogger)
 	require.NotNil(t, client)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
@@ -120,7 +124,7 @@ func TestHTTPClient_Find(t *testing.T) {
 			}))
 			defer server.Close()
 
-			client := viacep.NewHTTPClient(nil, server.URL, 50*time.Millisecond)
+			client := viacep.NewHTTPClient(nil, server.URL, 50*time.Millisecond, noopLogger)
 
 			ctx := context.Background()
 			if tt.fields.delay > 0 {
