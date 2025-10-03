@@ -8,6 +8,7 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o svc ./cmd/server/
 FROM scratch
 
 WORKDIR /app
+COPY --from=build /app/internal/infrastructure/config/.env .
 COPY --from=build /app/svc .
 
 ENTRYPOINT ["./svc"]
