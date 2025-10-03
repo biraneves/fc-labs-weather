@@ -60,22 +60,22 @@ type WeatherAPIResponseDto struct {
 		} `json:"condition"`
 		WindMph    float64 `json:"wind_mph"`
 		WindKph    float64 `json:"wind_kph"`
-		WindDegree int     `json:"wind_degree"`
+		WindDegree float64 `json:"wind_degree"`
 		WindDir    string  `json:"wind_dir"`
-		PressureMb int     `json:"pressure_mb"`
+		PressureMb float64 `json:"pressure_mb"`
 		PressureIn float64 `json:"pressure_in"`
-		Humidity   int     `json:"humidity"`
-		Cloud      int     `json:"cloud"`
+		Humidity   float64 `json:"humidity"`
+		Cloud      float64 `json:"cloud"`
 		FeelsLikeC float64 `json:"feelslike_c"`
 		FeelsLikeF float64 `json:"feelskile_f"`
 		WindChillC float64 `json:"windchill_c"`
 		WindChillF float64 `json:"windchill_f"`
 		HeatIndexC float64 `json:"heatindex_c"`
 		HeatIndexF float64 `json:"heatindex_f"`
-		DewPointC  int     `json:"dewpoint_c"`
+		DewPointC  float64 `json:"dewpoint_c"`
 		DewPointF  float64 `json:"dewpoint_f"`
-		VisKm      int     `json:"vis_km"`
-		VisMiles   int     `json:"vis_miles"`
+		VisKm      float64 `json:"vis_km"`
+		VisMiles   float64 `json:"vis_miles"`
 		Uv         float64 `json:"uv"`
 		GustMph    float64 `json:"gust_mph"`
 		GustKph    float64 `json:"gust_kph"`
