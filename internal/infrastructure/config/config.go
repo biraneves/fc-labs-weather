@@ -42,14 +42,6 @@ func Load(dir string) (AppConfig, error) {
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.AutomaticEnv()
 
-	v.SetDefault("HTTP_ADDR", ":8080")
-	v.SetDefault("HTTP_TIMEOUT", "5s")
-	v.SetDefault("VIACEP_URL", "https://viacep.com.br/ws")
-	v.SetDefault("VIACEP_RETURN_TYPE", "json")
-	v.SetDefault("VIACEP_TIMEOUT", "5s")
-	v.SetDefault("WEATHER_URL", "https://api.weatherapi.com/v1")
-	v.SetDefault("WEATHER_TIMEOU", "5s")
-
 	if err := v.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			slog.Warn("config: .env file not found, relying on environment variables and defaults")
@@ -80,7 +72,7 @@ func Load(dir string) (AppConfig, error) {
 
 	cfg := AppConfig{
 		HTTP: HTTPConfig{
-			Addr:    v.GetString("HTTP_ADDR"),
+			Addr:    fmt.Sprintf(":%s", v.GetString("PORT")),
 			Timeout: httpTimeout,
 		},
 		ViaCEP: ViaCEPConfig{
