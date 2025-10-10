@@ -52,7 +52,7 @@ WEATHER_TIMEOUT=6s
 		},
 		{
 			name: "missing api key",
-			envContent: `HTTP_ADDR=:8080
+			envContent: `PORT=8080
 HTTP_TIMEOUT=5s
 VIACEP_URL=https://viacep.com.br/ws/
 VIACEP_TIMEOUT=5s
@@ -63,7 +63,7 @@ WEATHER_TIMEOUT=5s
 		},
 		{
 			name: "invalid http timeout",
-			envContent: `HTTP_ADDR=:8080
+			envContent: `PORT=8080
 HTTP_TIMEOUT=invalid
 VIACEP_URL=https://viacep.com.br/ws/
 VIACEP_TIMEOUT=5s

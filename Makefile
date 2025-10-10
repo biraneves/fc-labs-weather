@@ -24,7 +24,7 @@ run: ## Runs the application locally.
 
 test: ## Runs all unit tests.
 	@echo "--> Running unit tests..."
-	@go test -v -race ./...
+	@go test -race ./...
 
 test-coverage: ## Runs tests and shows the coverage report in browser.
 	@echo "--> Running tests and generating coverage report..."
