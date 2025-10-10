@@ -23,6 +23,7 @@ func NewHandler(uc inbound.GetWeatherByCEPUseCase, logger *slog.Logger) *Handler
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /weather", h.handleWeather)
+	mux.HandleFunc("GET /healthz", h.handleHealth)
 }
 
 type errorBody struct {
@@ -96,6 +97,17 @@ func (h *Handler) handleWeather(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(out)
+}
+
+func (h *Handler) handleHealth(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(w).Encode(map[string]string{"status": "ok"})
 }
 
 func writeError(w http.ResponseWriter, status int, message string) {
