@@ -12,7 +12,7 @@ import (
 )
 
 func TestLoad(t *testing.T) {
-	t.Setenv("HTTP_ADDR", "")
+	t.Setenv("PORT", "")
 	t.Setenv("HTTP_TIMEOUT", "")
 	t.Setenv("VIACEP_URL", "")
 	t.Setenv("VIACEP_TIMEOUT", "")
@@ -28,7 +28,7 @@ func TestLoad(t *testing.T) {
 	}{
 		{
 			name: "success",
-			envContent: `HTTP_ADDR=:9090
+			envContent: `PORT=9090
 HTTP_TIMEOUT=3s
 VIACEP_URL=https://viacep.com.br/ws/
 VIACEP_RETURN_TYPE=json
