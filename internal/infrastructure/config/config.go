@@ -62,7 +62,7 @@ func Load(dir string) (AppConfig, error) {
 	viaCEPTimeout, err := parseDuration(os.Getenv("VIACEP_TIMEOUT"))
 	if err != nil {
 		slog.Warn("invalid VIACEP_TIMEOUT:", "default_value", defaultTimeout)
-		httpTimeout = defaultTimeout
+		viaCEPTimeout = defaultTimeout
 	}
 
 	weatherTimeout, err := parseDuration(os.Getenv("WEATHER_TIMEOUT"))
