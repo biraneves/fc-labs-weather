@@ -7,24 +7,27 @@ import (
 	"time"
 
 	"github.com/biraneves/fc-labs-weather/internal/infrastructure/config"
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestLoad(t *testing.T) {
-	t.Setenv("PORT", "")
-	t.Setenv("HTTP_TIMEOUT", "")
-	t.Setenv("VIACEP_URL", "")
-	t.Setenv("VIACEP_TIMEOUT", "")
-	t.Setenv("WEATHER_URL", "")
-	t.Setenv("WEATHER_API_KEY", "")
-	t.Setenv("WEATHER_TIMEOUT", "")
+	resetEnv := func(t *testing.T) {
+		t.Setenv("PORT", "")
+		t.Setenv("HTTP_TIMEOUT", "")
+		t.Setenv("VIACEP_URL", "")
+		t.Setenv("VIACEP_TIMEOUT", "")
+		t.Setenv("VIACEP_RETURN_TYPE", "")
+		t.Setenv("WEATHER_URL", "")
+		t.Setenv("WEATHER_API_KEY", "")
+		t.Setenv("WEATHER_TIMEOUT", "")
+	}
 
 	tests := []struct {
-		name          string
-		envContent    string
-		expectedError string
-		assertSuccess func(t *testing.T, cfg config.AppConfig)
+		name       string
+		envContent string
+		assertions func(t *testing.T, cfg config.AppConfig)
 	}{
 		{
 			name: "success",
@@ -37,7 +40,7 @@ WEATHER_URL=https://api.weatherapi.com/v1/
 WEATHER_API_KEY=abc123
 WEATHER_TIMEOUT=6s
 `,
-			assertSuccess: func(t *testing.T, cfg config.AppConfig) {
+			assertions: func(t *testing.T, cfg config.AppConfig) {
 				assert.Equal(t, ":9090", cfg.HTTP.Addr)
 				assert.Equal(t, 3*time.Second, cfg.HTTP.Timeout)
 
@@ -55,11 +58,23 @@ WEATHER_TIMEOUT=6s
 			envContent: `PORT=8080
 HTTP_TIMEOUT=5s
 VIACEP_URL=https://viacep.com.br/ws/
+VIACEP_RETURN_TYPE=xml
 VIACEP_TIMEOUT=5s
 WEATHER_URL=https://api.weatherapi.com/v1
 WEATHER_TIMEOUT=5s
 `,
-			expectedError: "missing WEATHER_API_KEY",
+			assertions: func(t *testing.T, cfg config.AppConfig) {
+				assert.Equal(t, ":8080", cfg.HTTP.Addr)
+				assert.Equal(t, 5*time.Second, cfg.HTTP.Timeout)
+
+				assert.Equal(t, "https://viacep.com.br/ws", cfg.ViaCEP.BaseURL)
+				assert.Equal(t, "xml", cfg.ViaCEP.ReturnType)
+				assert.Equal(t, 5*time.Second, cfg.ViaCEP.Timeout)
+
+				assert.Equal(t, "https://api.weatherapi.com/v1", cfg.Weather.BaseURL)
+				assert.Equal(t, "default_key", cfg.Weather.APIKey)
+				assert.Equal(t, 5*time.Second, cfg.Weather.Timeout)
+			},
 		},
 		{
 			name: "invalid http timeout",
@@ -71,34 +86,45 @@ WEATHER_URL=https://api.weatherapi.com/v1
 WEATHER_API_KEY=foo
 WEATHER_TIMEOUT=5s
 `,
-			expectedError: "invalid HTTP_TIMEOUT",
+			assertions: func(t *testing.T, cfg config.AppConfig) {
+				assert.Equal(t, ":8080", cfg.HTTP.Addr)
+				assert.Equal(t, 5*time.Second, cfg.HTTP.Timeout)
+				assert.Equal(t, 5*time.Second, cfg.ViaCEP.Timeout)
+				assert.Equal(t, 5*time.Second, cfg.Weather.Timeout)
+			},
 		},
 		{
-			name:          "missing file",
-			expectedError: "load config file",
+			name: "missing file",
+			assertions: func(t *testing.T, cfg config.AppConfig) {
+				assert.Equal(t, ":8080", cfg.HTTP.Addr)
+				assert.Equal(t, 5*time.Second, cfg.HTTP.Timeout)
+
+				assert.Equal(t, "", cfg.ViaCEP.BaseURL)
+				assert.Equal(t, "json", cfg.ViaCEP.ReturnType)
+				assert.Equal(t, 5*time.Second, cfg.ViaCEP.Timeout)
+
+				assert.Equal(t, "", cfg.Weather.BaseURL)
+				assert.Equal(t, "default_key", cfg.Weather.APIKey)
+				assert.Equal(t, 5*time.Second, cfg.Weather.Timeout)
+			},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			dir := t.TempDir()
+			resetEnv(t)
+
 			if tt.envContent != "" {
-				err := os.WriteFile(filepath.Join(dir, ".env"), []byte(tt.envContent), 0o644)
-				require.NoError(t, err)
+				dir := t.TempDir()
+				envPath := filepath.Join(dir, ".env")
+
+				require.NoError(t, os.WriteFile(envPath, []byte(tt.envContent), 0o644))
+				require.NoError(t, godotenv.Overload(envPath))
 			}
 
-			cfg, err := config.Load(dir)
-
-			if tt.expectedError != "" {
-				require.Error(t, err)
-				assert.Contains(t, err.Error(), tt.expectedError)
-				assert.Equal(t, config.AppConfig{}, cfg)
-				return
-			}
-
+			cfg, err := config.Load(".")
 			require.NoError(t, err)
-			require.NotNil(t, tt.assertSuccess)
-			tt.assertSuccess(t, cfg)
+			tt.assertions(t, cfg)
 		})
 	}
 }
